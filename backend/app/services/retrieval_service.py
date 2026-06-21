@@ -2,6 +2,7 @@
 
 from app.services.embedding_service import create_embedding
 from app.vectorstore.chroma_service import search
+from app.config import DEBUG
 
 
 def retrieve_context(
@@ -14,28 +15,37 @@ def retrieve_context(
         embedding=query_embedding,
         n_results=n_results
     )
+    if DEBUG:
+        print("\n")
+        print("=" * 100)
+        print("QUERY:", query)
+        print("=" * 100)
 
-    print("\n")
-    print("=" * 100)
-    print("QUERY:", query)
-    print("=" * 100)
 
     documents = results["documents"][0]
     distances = results["distances"][0]
     metadatas = results["metadatas"][0]
 
-    for doc, distance, metadata in zip(documents, distances, metadatas):
-        print("\n")
-        print("-" * 80)
-        print("Distance:", distance)
-        print("Metadata:", metadata)
-        print("Preview:")
-        print(doc[:250])
+    if DEBUG:
+        for doc, distance, metadata in zip(
+                documents,
+                distances,
+                metadatas
+        ):
+            print("\n")
+            print("-" * 80)
+            print("Distance:", distance)
+            print("Metadata:", metadata)
+            print("Preview:")
+            print(doc[:250])
 
-    good_chunks = []
+    # good_chunks = []
 
-    for doc, distance in zip(documents, distances):
-        if distance < 1.2:
-            good_chunks.append(doc)
+    # for doc, distance in zip(documents, distances):
+    #     if distance < 1.2:
+    #         good_chunks.append(doc)
 
-    return "\n\n".join(good_chunks)
+    return {
+        "context": "\n\n".join(documents),
+        "sources": metadatas
+    }

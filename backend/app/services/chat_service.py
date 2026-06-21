@@ -2,6 +2,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 from app.services.retrieval_service import retrieve_context
+from app.llm.prompts import build_rag_prompt
 
 load_dotenv()
 
@@ -11,22 +12,14 @@ client = OpenAI(
 
 def ask_question(question: str):
 
-    context = retrieve_context(question)
+    retrieval_result = retrieve_context(question)
+    context = retrieval_result["context"]
+    sources = retrieval_result["sources"]
 
-    prompt = f"""
-You are a helpful assistant.
-
-Answer ONLY using the provided context.
-
-If the answer is not present in the context, say:
-"I could not find that information in the document."
-
-Context:
-{context}
-
-Question:
-{question}
-"""
+    prompt = build_rag_prompt(
+        question=question,
+        context=context
+    )
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -38,4 +31,7 @@ Question:
         ]
     )
 
-    return response.choices[0].message.content
+    return {
+        "answer": response.choices[0].message.content,
+        "sources": sources
+    }
