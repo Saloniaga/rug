@@ -28,5 +28,10 @@ def search(
 ):
     return collection.query(
         query_embeddings=[embedding],
-        n_results=n_results
+        n_results=n_results,
+        include=[
+            "documents",
+            "metadatas",
+            "distances"
+        ]
     )
