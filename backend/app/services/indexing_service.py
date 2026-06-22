@@ -8,9 +8,9 @@ def index_document(
         text: str
 ):
     chunks = chunk_text(text)
-
+    print("Chunk Count:", len(chunks))
     for i, chunk in enumerate(chunks):
-
+        print("Indexing chunk", i)
         embedding = create_embedding(chunk)
 
         add_document(
@@ -22,3 +22,4 @@ def index_document(
                 "chunk_number": i
             }
         )
+    print("Finished indexing")
