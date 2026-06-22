@@ -10,6 +10,7 @@ router = APIRouter()
 async def chat(request: ChatRequest):
 
     return ask_question(
-        request.question
+        session_id=request.session_id,
+        question=request.question
     )
     

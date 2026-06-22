@@ -21,7 +21,6 @@ def retrieve_context(
         print("QUERY:", query)
         print("=" * 100)
 
-
     documents = results["documents"][0]
     distances = results["distances"][0]
     metadatas = results["metadatas"][0]
@@ -45,7 +44,19 @@ def retrieve_context(
     #     if distance < 1.2:
     #         good_chunks.append(doc)
 
+    sources = []
+
+    for metadata, distance in zip(
+            metadatas,
+            distances
+    ):
+        sources.append({
+            "filename": metadata["filename"],
+            "chunk_number": metadata["chunk_number"],
+            "distance": round(distance, 3)
+        })
+
     return {
         "context": "\n\n".join(documents),
-        "sources": metadatas
+        "sources": sources
     }
