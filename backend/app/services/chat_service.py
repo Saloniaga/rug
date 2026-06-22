@@ -48,7 +48,8 @@ def ask_question(session_id: str,question: str):
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
-        messages=messages
+        messages=messages,
+        max_tokens=300
     )
     answer = response.choices[0].message.content
 
