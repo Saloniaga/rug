@@ -12,9 +12,16 @@ client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY")
 )
 
-def ask_question(session_id: str,question: str):
+def ask_question(
+        session_id: str,
+        question: str,
+        filename: str
+):
 
-    retrieval_result = retrieve_context(question)
+    retrieval_result = retrieve_context(
+    query=question,
+    filename=filename
+    )
     context = retrieval_result["context"]
     sources = retrieval_result["sources"]
 
