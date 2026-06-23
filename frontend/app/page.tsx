@@ -22,6 +22,10 @@ export default function Home() {
 
   const [sessionId] = useState(crypto.randomUUID());
 
+  const [documents, setDocuments] = useState<string[]>([]);
+
+  const [selectedDocument, setSelectedDocument] = useState("");
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -29,6 +33,27 @@ export default function Home() {
         behavior: "smooth"
     });
     }, [messages]);
+
+    useEffect(() => {
+
+  const loadDocuments = async () => {
+
+      const response = await fetch(
+        "http://localhost:8000/documents"
+      );
+
+      const data = await response.json();
+
+      setDocuments(data);
+
+      if (data.length > 0) {
+        setSelectedDocument(data[0]);
+      }
+    };
+
+  loadDocuments();
+
+  }, []);
 
   const uploadFile = async () => {
     if (!file) {
@@ -82,7 +107,7 @@ export default function Home() {
         body: JSON.stringify({
           session_id: sessionId,
           question: userQuestion,
-          filename: "SaloniAgar_0626_SWE.pdf"
+          filename: selectedDocument
         }),
       }
     );
@@ -130,7 +155,7 @@ export default function Home() {
       body: JSON.stringify({
         session_id: sessionId,
         question: userQuestion,
-        filename: "SaloniAgar_0626_SWE.pdf"
+        filename: selectedDocument
       })
     }
   );
@@ -253,6 +278,36 @@ export default function Home() {
         ))}
         <div ref={bottomRef} />
       </div>
+
+      <div className="mb-4">
+
+        <label className="block mb-2">
+          Select Document
+        </label>
+
+        <select
+          value={selectedDocument}
+          onChange={(e) =>
+            setSelectedDocument(e.target.value)
+          }
+          className="border p-2 rounded bg-white text-black w-full"
+        >
+          {
+            documents.map((doc) => (
+              <option
+                key={doc}
+                value={doc}
+              >
+                {doc}
+              </option>
+            ))
+          }
+        </select>
+
+      </div>
+      <p className="text-sm text-gray-400 mt-2">
+        Current document: {selectedDocument}
+      </p>
 
       <div className="flex gap-2">
         <input
