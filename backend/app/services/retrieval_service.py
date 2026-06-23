@@ -1,5 +1,7 @@
 # app/services/retrieval_service.py
 
+from typing import Optional
+
 from app.services.embedding_service import create_embedding
 from app.vectorstore.chroma_service import search
 from app.config import DEBUG
@@ -7,13 +9,15 @@ from app.config import DEBUG
 
 def retrieve_context(
         query: str,
+        filename: Optional[str] = None,
         n_results: int = 5
 ):
     query_embedding = create_embedding(query)
 
     results = search(
         embedding=query_embedding,
-        n_results=n_results
+        n_results=n_results,
+        filename=filename
     )
     if DEBUG:
         print("\n")

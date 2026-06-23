@@ -15,7 +15,8 @@ async def chat_stream(
 
     generator = ask_question_stream(
         session_id=request.session_id,
-        question=request.question
+        question=request.question,
+        filename=request.filename
     )
 
     return StreamingResponse(

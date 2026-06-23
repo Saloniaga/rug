@@ -1,3 +1,5 @@
+from typing import Optional
+
 import chromadb
 
 client = chromadb.PersistentClient(
@@ -24,14 +26,22 @@ def add_document(
 
 def search(
         embedding: list,
-        n_results: int = 5
+        n_results: int = 5,
+        filename: Optional[str] = None
 ):
-    return collection.query(
-        query_embeddings=[embedding],
-        n_results=n_results,
-        include=[
+    query_params = {
+        "query_embeddings": [embedding],
+        "n_results": n_results,
+        "include": [
             "documents",
             "metadatas",
             "distances"
         ]
-    )
+    }
+
+    if filename:
+        query_params["where"] = {
+            "filename": filename
+        }
+
+    return collection.query(**query_params)
